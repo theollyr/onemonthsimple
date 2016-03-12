@@ -58,7 +58,7 @@ module Onemonthsimple
 
     # Enable the asset pipeline
     config.assets.enabled = true
-    
+
     # add app/assets/fonts to the asset path
     config.assets.paths << Rails.root.join("app", "assets", "fonts")
 
@@ -66,5 +66,7 @@ module Onemonthsimple
     config.assets.version = '1.0'
 
     I18n.config.enforce_available_locales = false
+
+    config.middleware.use Rack::Attack
   end
 end
