@@ -1,12 +1,21 @@
 require 'encryption'
 
 class User < ActiveRecord::Base
+  PASSWORD_FORMAT = /\A
+    (?=.{6,})          # Must contain 6 or more characters
+    (?=.*\d)           # Must contain a digit
+    (?=.*[a-z])        # Must contain a lower case character
+    (?=.*[A-Z])        # Must contain an upper case character
+    (?=.*[[:^alnum:]]) # Must contain a symbol
+  /x
+
   attr_accessible :email, :admin, :first_name, :last_name, :user_id, :password, :password_confirmation
   validates :password, :presence => true,
                        :confirmation => true,
                        :length => {:within => 6..40},
                        :on => :create,
-                       :if => :password
+                       :if => :password,
+                       :format => { with: PASSWORD_FORMAT }
 
   validates_presence_of :email
   validates_uniqueness_of :email
