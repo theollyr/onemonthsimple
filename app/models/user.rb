@@ -48,7 +48,7 @@ class User < ActiveRecord::Base
   def self.authenticate(email, password)
     auth = nil
     user = find_by_email(email)
-    if user && user.password == Digest::MD5.hexdigest(password)
+    if user && user.password == BCrypt::Engine.hash_secret(password, user.password_salt)
       auth = user
     else
       raise "Incorrect Username or Password!"
@@ -67,7 +67,8 @@ class User < ActiveRecord::Base
   def hash_password
     unless @skip_hash_password == true
       if password.present?
-        self.password = Digest::MD5.hexdigest(password)
+        self.password_salt = BCrypt::Engine.generate_salt
+        self.password = BCrypt::Engine.hash_secret(self.password, self.password_salt)
       end
     end
   end
