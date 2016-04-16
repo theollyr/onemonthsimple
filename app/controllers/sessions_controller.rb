@@ -8,7 +8,12 @@ class SessionsController < ApplicationController
   end
 
   def create
-    path = params[:url].present? ? params[:url] : home_dashboard_index_path
+    if params[:url].present?
+      path = URI.parse(params[:url]).path
+    else
+      path = home_dashboard_index_path
+    end
+    
     begin
       # Normalize the email address, why not
       user = User.authenticate(params[:email].to_s.downcase, params[:password])
